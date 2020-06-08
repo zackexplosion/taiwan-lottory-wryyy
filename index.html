@@ -1,0 +1,102 @@
+
+<div>
+  <button id="mother">媽媽</button>
+  <button class="tits">奶子</button>
+  <button class="tits">奶子</button>
+  <button class="lottery">開獎</button>
+</div>
+
+<script>
+
+var motherButton = document.querySelector('#motherButton')
+
+var titsButton = document.querySelectorAll('.tits')
+if(titsButton) {
+  titsButton.forEach(e => {
+    e.addEventListener('click', () => {
+    alert('奶子奶子奶子奶子奶子奶子奶子奶子奶子奶子奶子奶子奶子奶子奶子')
+  })
+  })
+
+}
+
+const MAX_NUMBER = 10
+const MAX_NUMBER_LENGTH = 5
+var sold_numbers = {}
+
+for(let i = 1;  i <= MAX_NUMBER;i++) {
+  var index = i
+  if(i < 10) {
+    index = "0" + i
+  }
+  sold_numbers['_'+ index.toString()] = 0
+}
+function getNumber () {
+  var i = parseInt(Math.random() * MAX_NUMBER) + 1
+  if(i < 10) {
+    i = "0" + i
+  }
+  return i.toString()
+}
+
+function notNumber(x) {
+
+  var i = getNumber()
+
+  if(x.includes(i)) {
+   i = notNumber(x)
+  }
+
+  return i
+}
+
+function createLottery() {
+  var result = []
+
+  for (let index = 0; index < MAX_NUMBER_LENGTH; index++) {
+    let i = getNumber()
+    if(result.includes(i)) {
+      i = getNumber()
+    }
+
+    i = notNumber(['10', '07'])
+
+    sold_numbers['_'+i]++
+    result.push(i)
+  }
+
+  return result
+}
+
+for (let index = 0; index < 10; index++) {
+  var a = createLottery()
+  console.log(a)
+}
+
+console.log(sold_numbers)
+
+document.querySelector('.lottery').addEventListener('click', () => {
+  alert(createLottery())
+})
+
+// console.log(i)
+
+
+// var i = '123123123123'
+
+// setInterval(function(){
+//   var i = new Date().getTime()
+//   console.log(i)
+// }, 1000)
+
+
+
+// var winner = [ 6, 8, 2, 5 ]
+
+// console.log(winner)
+
+
+
+
+
+</script>
