@@ -1,5 +1,4 @@
-
-const db = require('./db')
+// const db = require('./db')
 
 function createCounter() {
   var counter = {}
@@ -35,16 +34,21 @@ function sortCounter(counter){
 }
 
 
-const rows = db.get('dailycash').value()
-let counter = createCounter()
-rows.forEach(r => {
+// const rows = db.get('dailycash').value()
+// let counter = createCounter()
+// rows.forEach(r => {
+//   // console.log(r)
+//   r.numbers.forEach(n => {
+//     counter[n] ++
+//   })
+// })
 
-  // console.log(r)
-  r.numbers.forEach(n => {
-    counter[n] ++
-  })
+// var r = sortCounter(counter)
+// console.log(r)
 
-})
 
-  var r = sortCounter(counter)
-  console.log(r)
+module.exports = {
+  // db,
+  sortCounter,
+  createCounter
+}

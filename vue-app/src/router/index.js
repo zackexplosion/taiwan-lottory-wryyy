@@ -13,7 +13,7 @@ export default new Router({
       component: GameList
     },
     {
-      path: '/game/dailycash',
+      path: '/games/dailycash',
       name: 'dailycash',
       component: DailyCashIndex
     }
