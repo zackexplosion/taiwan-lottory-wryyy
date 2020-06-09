@@ -91,9 +91,9 @@ export default {
       historyData: [],
       displayData: [],
       pickerOptions: {
-        disabledDate: time => {
-          return time.getTime() > new Date(2014, 1, 1) || new Date().getTime()
-        },
+        // disabledDate: time => {
+        //   return time.getTime() > new Date(2014, 1, 1) || new Date().getTime()
+        // },
         shortcuts: [{
           text: '最近三個月',
           onClick(picker) {

@@ -27,8 +27,8 @@ function sleep(ms) {
 async function fetchData(year = '109', month = '6', page) {
   await page.waitForSelector('#D539Control_history1_radYM')
   await page.click('#D539Control_history1_radYM')
-  await page.type('#D539Control_history1_dropYear', year)
-  await page.type('#D539Control_history1_dropMonth', month)
+  await page.select('#D539Control_history1_dropYear', year)
+  await page.select('#D539Control_history1_dropMonth', month)
   await page.click('#D539Control_history1_btnSubmit')
   await page.waitForNavigation({
     timeout: 0
@@ -54,13 +54,17 @@ async function fetchData(year = '109', month = '6', page) {
       try {
         const $ = await fetchData(y, m, page)
         console.log('sleeping')
-        // await sleep(5000)
+        await sleep(500)
         toDB($)
       } catch (error) {
         console.error(error)
       }
     }
   }
+  // const $ = await fetchData('108', '1', page)
+  // console.log('sleeping')
+  // await sleep(5000)
+  // toDB($)
   await browser.close();
 })()
 
@@ -75,11 +79,12 @@ function toDB($) {
       let n = $(v).html()
       numbers.push(n)
     })
-
-    db.get('dailycash')
-    .push({
+    const r = {
       id, d, numbers
-    })
+    }
+    console.log(r)
+    db.get('dailycash')
+    .push(r)
     .write()
   })
 }
