@@ -11,7 +11,7 @@
         end-placeholder="結束月份"/>
     </div>
     <el-divider/>
-    <h2>從出現次數多的號碼開始</h2>
+    <h2>從出現次數多的號碼開始，選擇的範圍內開出了 {{ historyDataLenth }} 期彩卷</h2>
     <div class="tag-group">
       <el-badge
         v-for="(d, index) in displayData"
@@ -47,7 +47,8 @@
       <el-col :md="12">
         <h2>歷史資料</h2>
         <el-table
-          :data="historyData"
+          v-infinite-scroll="historyDataRendered"
+          :data="historyDataRendered"
           height="350"
           style="width: 100%">
           <el-table-column
@@ -88,12 +89,14 @@ const defaultMonthRange = [start, end]
 export default {
   data() {
     return {
+      historyDataLenth: 0,
+      historyDataRendered: [],
       historyData: [],
       displayData: [],
       pickerOptions: {
-        // disabledDate: time => {
-        //   return time.getTime() > new Date(2014, 1, 1) || new Date().getTime()
-        // },
+        disabledDate: time => {
+          return time.getTime() < new Date(2014, 0, 0) || time.getTime() > new Date().getTime()
+        },
         shortcuts: [{
           text: '最近三個月',
           onClick(picker) {
@@ -125,7 +128,7 @@ export default {
           text: '全部（103年開始)',
           onClick(picker) {
             const end = new Date()
-            const start = new Date(2014, 1, 0)
+            const start = new Date(2014, 0, 0)
             // start.setMonth(start.getMonth() - 11)
             picker.$emit('pick', [start, end])
           }
@@ -145,8 +148,30 @@ export default {
     this.countDisplayData()
   },
   methods: {
+    // historyTableScroll() {
+    //   console.log('historyTableScroll')
+    // },
+    updateHistoryDataRendered() {
+      var r
+      var index = 0
+      do {
+        r = this.historyData.shift()
+
+        if (r) {
+          this.historyDataRendered.push(r)
+          index++
+        } else {
+          break
+        }
+      } while (r && index < 200)
+    },
     countDisplayData() {
-      var displayData = []
+      const loading = this.$loading({
+        lock: true,
+        text: 'Loading',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
       var filteredData = []
       rawData['dailycash'].forEach(v => {
         var date = v.d.split('/').map(d => {
@@ -155,13 +180,13 @@ export default {
           }
           return d
         }).join('/')
-        console.log()
         date = moment(date)
         if (date > moment(this.monthRange[0]) && date < moment(this.monthRange[1])) {
           filteredData.push(v)
         }
       })
 
+      // count numbers
       var counter = createCounter()
 
       filteredData.forEach(r => {
@@ -170,10 +195,21 @@ export default {
           counter[n]++
         })
       })
-      this.historyData = filteredData
-      displayData = sortCounter(counter)
 
-      this.displayData = displayData
+      this.historyData = filteredData
+
+      // for display
+      this.historyDataLenth = filteredData.length
+
+      // prevent render too much rows at same time
+      this.updateHistoryDataRendered()
+
+      // sorting counter final result
+      this.displayData = sortCounter(counter)
+
+      setTimeout(() => {
+        loading.close()
+      }, 500)
     }
   }
 }
